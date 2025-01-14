@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Movie APP 
+
+This is a Movie Application built using Next.js, which fetches data from The Movie Database (TMDb) API. The app allows users to explore movie details, including titles, release dates, poster images, and ratings.
+
+## Features
+
+- **Movie Listing**: Browse a list of movies fetched from TMDb.
+- **Movie Details**: Click on a movie to see more detailed information.
+- **Responsive Design**: Optimized for both mobile and desktop devices.
+- **Custom Fonts**: The app uses custom fonts (Geist Sans and Geist Mono) to provide a unique and clean design.
+
+## Tech Stack
+
+- **Frontend**: Next.js, React
+- **Styling**: Tailwind CSS
+- **API**: TMDb API (The Movie Database)
 
 ## Getting Started
 
