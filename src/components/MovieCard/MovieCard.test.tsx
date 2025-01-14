@@ -2,13 +2,18 @@ import { render, screen } from "@testing-library/react";
 import MovieCard from "./";
 import { BrowserRouter as Router } from "react-router-dom";
 
-jest.mock("@/components/ImageCard", () => () => (
-  <div data-testid="image-card" />
-));
+jest.mock("@/components/ImageCard", () => {
+  const ImageCard = () => <div data-testid="image-card" />;
+  ImageCard.displayName = "ImageCard";
+  return ImageCard;
+});
+
 jest.mock("@/components/Vote", () => {
-  return ({ value }: { value: string }) => (
+  const Vote = ({ value }: { value: string }) => (
     <div data-testid="vote">{value}</div>
   );
+  Vote.displayName = "Vote";
+  return Vote;
 });
 
 describe("MovieCard", () => {

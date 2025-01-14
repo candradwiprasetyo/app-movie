@@ -68,7 +68,7 @@ export default function Home() {
     };
 
     loadMovies();
-  }, [page, debouncedSearchQuery, category]);
+  }, [page, debouncedSearchQuery, category, isInitialLoadComplete]);
 
   useEffect(() => {
     const handleScroll = () => {

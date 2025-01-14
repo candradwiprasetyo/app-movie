@@ -1,5 +1,12 @@
 export type CategoryType = "now_playing" | "popular" | "top_rated" | "upcoming";
 
+export type CastType = {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string;
+};
+
 export type GenreType = {
   id: number;
   name: string;

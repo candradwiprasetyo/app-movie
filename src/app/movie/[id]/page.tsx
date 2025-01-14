@@ -1,4 +1,8 @@
-import Link from "next/link";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { fetchMovieDetail } from "@/api/movieApi";
 import ImageCard from "@/components/ImageCard";
 import BackgroundImage from "@/components/BackgroundImage";
 import DetailTitle from "@/components/DetailTitle";
@@ -6,40 +10,45 @@ import DetailGenre from "@/components/DetailGenre";
 import MainCastCard from "@/components/MainCastCard";
 import Vote from "@/components/Vote";
 import DetailDescription from "@/components/DetailDescription";
-import { MovieDetailParamProps } from "@/types";
-import { fetchMovieDetail } from "@/api/movieApi";
+import Link from "next/link";
+import {
+  MovieDetailProps,
+  GenreType,
+  CastType,
+  ProductionCountriesType,
+} from "@/types";
 
-const getVote = (vote: number = 0) => {
-  let result = (vote * 10).toString();
-  result = result.slice(0, 2);
-  return result;
-};
+const MovieDetail = () => {
+  const [movie, setMovie] = useState<MovieDetailProps | null>(null);
+  const { id } = useParams();
 
-const formatHours = (totalMinutes: number = 0) => {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}h ${minutes}m`;
-};
+  useEffect(() => {
+    if (id) {
+      const movieId = Array.isArray(id) ? id[0] : id;
+      const fetchData = async () => {
+        const movieData = await fetchMovieDetail(movieId);
+        setMovie(movieData);
+      };
+      fetchData();
+    }
+  }, [id]);
 
-export default async function MovieDetail({ params }: MovieDetailParamProps) {
-  const { id } = await params;
-  const movie = await fetchMovieDetail(id);
-  const genres = movie?.genres.map((obj) => obj.name).join(", ");
-  const country = movie?.production_countries.map((obj) => obj.name).join(", ");
-  const vote = getVote(movie?.vote_average);
-  const duration = formatHours(movie?.runtime || 0);
-  const backgroundMovie = movie?.belongs_to_collection?.backdrop_path
-    ? movie?.belongs_to_collection?.backdrop_path
-    : movie?.poster_path;
-  const director =
-    movie?.credits?.crew?.find((member) => member.job === "Director") ?? null;
   if (!movie) {
-    return <div className="p-4">Film tidak ditemukan</div>;
+    return false;
   }
+
+  const genres = movie?.genres.map((obj: GenreType) => obj.name).join(", ");
+  const country = movie?.production_countries
+    .map((obj: ProductionCountriesType) => obj.name)
+    .join(", ");
+  const vote = (movie?.vote_average * 10).toString().slice(0, 2);
+  const duration = movie?.runtime
+    ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+    : "";
 
   return (
     <div className="p-10">
-      <BackgroundImage posterPath={backgroundMovie} />
+      <BackgroundImage posterPath={movie?.poster_path} />
       <div className="md:flex absolute inset-0 p-6 md:p-10">
         <div className="md:w-1/4 flex-none relative">
           <ImageCard
@@ -62,20 +71,21 @@ export default async function MovieDetail({ params }: MovieDetailParamProps) {
             overview={movie.overview}
             status={movie.status}
             country={country}
-            director={director?.name}
           />
           <div className="mb-2">
             <strong>Main Cast</strong>
           </div>
           <div className="flex gap-3 mb-6 flex-wrap justify-between md:justify-start">
-            {movie?.credits?.cast?.slice(0, 6).map((cast, index) => (
-              <MainCastCard
-                key={index}
-                name={cast.name}
-                character={cast.character}
-                profilePath={cast.profile_path}
-              />
-            ))}
+            {movie?.credits?.cast
+              ?.slice(0, 6)
+              .map((cast: CastType, index: number) => (
+                <MainCastCard
+                  key={index}
+                  name={cast.name}
+                  character={cast.character}
+                  profilePath={cast.profile_path}
+                />
+              ))}
           </div>
           <Link href="/">
             <button className="p-3 bg-blue-500 rounded text-white mb-6">
@@ -86,4 +96,6 @@ export default async function MovieDetail({ params }: MovieDetailParamProps) {
       </div>
     </div>
   );
-}
+};
+
+export default MovieDetail;
